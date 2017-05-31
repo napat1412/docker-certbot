@@ -31,10 +31,9 @@ RUN export BUILD_DEPS="git \
     && rm -rf /var/cache/apk/*
 
 
-VOLUME /etc/letsencrypt 
-WORKDIR /usr/src/python
+VOLUME ["/etc/letsencrypt", "/usr/src/python"]
 
-COPY main.py ..
-COPY example .
+COPY main.py /usr/src/
+COPY example /usr/src/python/
 
-CMD [ "python", "-u", "../main.py" ]
+CMD [ "python", "-u", "/usr/src/main.py" ]

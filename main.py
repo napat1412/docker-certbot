@@ -15,6 +15,7 @@ os.system("pip install --no-cache-dir {0}".format(pip_module))
 
 ##### list PYTHON_APP and fork it #####
 files = os.listdir(PYTHON_APP)
+files.sort()
 for file in files:
   isPythonFile = file.endswith(".py")
   if isPythonFile:
