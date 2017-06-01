@@ -8,10 +8,12 @@ def child(pythonFile):
 PYTHON_APP = "/usr/src/python"
 childPID_list = []
 
+
 ##### install PIP_MODULE #####
 pip_module = os.getenv('PIP_MODULE', "")
 print("Installing PIP_MODULE: {0}".format(pip_module))
 os.system("pip install --no-cache-dir {0}".format(pip_module))
+
 
 ##### list PYTHON_APP and fork it #####
 files = os.listdir(PYTHON_APP)
