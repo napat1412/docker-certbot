@@ -5,10 +5,6 @@ LABEL Version="1.0"
 
 WORKDIR /opt/certbot
 ENV PATH /opt/certbot/venv/bin:$PATH
-ENV CERTBOT_RELEASE "0.31.0"
-
-#RUN apk -U upgrade && apk add curl
-#RUN curl -L https://github.com/certbot/certbot/archive/v${CERTBOT_RELEASE}.tar.gz -o /opt/master.tar.gz
 
 RUN export BUILD_DEPS="curl \
                 build-base \
@@ -24,8 +20,7 @@ RUN export BUILD_DEPS="curl \
                 ${BUILD_DEPS} \
 
     && pip --no-cache-dir install virtualenv
-RUN curl -L https://github.com/certbot/certbot/archive/v${CERTBOT_RELEASE}.tar.gz | tar -xz -C /opt/certbot \
-    && mv /opt/certbot/certbot-${CERTBOT_RELEASE} /opt/certbot/src \
+RUN curl -L https://github.com/certbot/certbot/archive/v0.31.0.tar.gz | tar -xz -C /opt/certbot \
     && virtualenv --no-site-packages -p python2 /opt/certbot/venv
 RUN /opt/certbot/venv/bin/pip install \
         -e /opt/certbot/src/acme \
