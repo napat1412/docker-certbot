@@ -35,6 +35,7 @@ RUN /opt/certbot/venv/bin/pip install \
         -e /opt/certbot/src/certbot-dns-cloudflare \
         -e /opt/certbot/src/certbot-dns-google \
         -e /opt/certbot/src/certbot-dns-route53 \
+    && /opt/certbot/venv/bin/pip install schedule redis \
     && apk del ${BUILD_DEPS} \
     && rm -rf /var/cache/apk/*
 
