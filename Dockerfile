@@ -1,11 +1,11 @@
 FROM alpine:3.6
 LABEL maintainer="Napat Chuangchunsong <https://github.com/napat>"
 LABEL Name="Cerv2.0"
-LABEL Version="1.0"
+LABEL Version="2.0"
 
 WORKDIR /opt/certbot
 ENV PATH /opt/certbot/venv/bin:$PATH
-ENV CERTBOT_RELEASE "0.31.0"
+ENV CERTBOT_RELEASE "0.32.0"
 
 #RUN apk -U upgrade && apk add curl
 #RUN curl -L https://github.com/certbot/certbot/archive/v${CERTBOT_RELEASE}.tar.gz -o /opt/master.tar.gz
@@ -31,7 +31,10 @@ RUN /opt/certbot/venv/bin/pip install \
         -e /opt/certbot/src/acme \
         -e /opt/certbot/src \
         -e /opt/certbot/src/certbot-apache \
-        -e /opt/certbot/src/certbot-nginx \ 
+        -e /opt/certbot/src/certbot-nginx \
+        -e /opt/certbot/src/certbot-dns-cloudflare \
+        -e /opt/certbot/src/certbot-dns-google \
+        -e /opt/certbot/src/certbot-dns-route53 \
     && apk del ${BUILD_DEPS} \
     && rm -rf /var/cache/apk/*
 
