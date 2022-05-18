@@ -1,17 +1,16 @@
-import os
+mport os
+#os.system("chmod +x /usr/src/python/dns-update.sh")
 
-KUBECTL_PATH="/usr/local/bin"
-MASTER_HOST="172.16.0.220"
-SSL_PATH="/mnt/kube-ssl"
-CA_CERT="{0}/ca.pem".format(SSL_PATH)
-ADMIN_KEY="{0}/admin-key.pem".format(SSL_PATH)
-ADMIN_CERT="{0}/admin.pem".format(SSL_PATH)
+KUBECTL_VER="v1.11.6"
 
-print("Install kubectl")
-os.system("wget -O "+KUBECTL_PATH+"/kubectl http://storage.googleapis.com/kubernetes-release/release/v1.5.4/bin/linux/amd64/kubectl")
-os.system("chmod a+x "+KUBECTL_PATH+"/kubectl")
+KUBECTL_PATH="/mnt/bin/kubectl"
 
-os.system("kubectl config set-cluster default-cluster --server=https://"+MASTER_HOST+" --certificate-authority="+CA_CERT)
-os.system("kubectl config set-credentials default-admin --certificate-authority="+CA_CERT+" --client-key="+ADMIN_KEY+" --client-certificate="+ADMIN_CERT)
-os.system("kubectl config set-context default-system --cluster=default-cluster --user=default-admin")
-os.system("kubectl config use-context default-system")
+if not os.path.isfile(KUBECTL_PATH):
+  print("Install kubectl")
+  os.system("mkdir -p {0}".format(KUBECTL_PATH))
+  os.system("rm -rf {0}".format(KUBECTL_PATH))
+  KUBECTL_PATH_TMP=KUBECTL_PATH+".tmp"
+  os.system("wget -O "+KUBECTL_PATH_TMP+" http://storage.googleapis.com/kubernetes-release/release/"+KUBECTL_VER+"/bin/linux/amd64/kubectl")
+  os.system("mv "+KUBECTL_PATH_TMP+" "+KUBECTL_PATH)
+  os.system("chmod a+x "+KUBECTL_PATH)
+print("kubectl is installed")

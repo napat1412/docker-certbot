@@ -1,48 +1,32 @@
-FROM alpine:3.6
-LABEL maintainer="Napat Chuangchunsong <https://github.com/napat>"
-LABEL Name="Cerv2.0"
-LABEL Version="2.0"
+FROM alpine:3.14
+LABEL maintainer="Napat Chuangchunsong <https://github.com/napat1412>"
+LABEL Name="Certbot"
+LABEL Version="1.27.0"
 
 WORKDIR /opt/certbot
-ENV PATH /opt/certbot/venv/bin:$PATH
-ENV CERTBOT_RELEASE "0.32.0"
 
-#RUN apk -U upgrade && apk add curl
-#RUN curl -L https://github.com/certbot/certbot/archive/v${CERTBOT_RELEASE}.tar.gz -o /opt/master.tar.gz
+#RUN apk -U upgrade
+RUN apk add --update --no-cache linux-headers curl python3 py-pip
 
-RUN export BUILD_DEPS="curl \
-                build-base \
-                libffi-dev \
-                linux-headers \
-                py-pip \
-                python-dev" \
-    && apk -U upgrade \
-    && apk add dialog \
-                python \
-                openssl-dev \
-		augeas-libs \
-                ${BUILD_DEPS} \
+### alpine 3.14.6 install certbot-dns-google
+RUN apk add --update --no-cache gcc musl-dev python3-dev libffi-dev openssl-dev cargo augeas-libs
+RUN pip3 --no-cache-dir install certbot certbot-dns-google certbot-dns-route53
 
-    && pip --no-cache-dir install virtualenv
-RUN curl -L https://github.com/certbot/certbot/archive/v${CERTBOT_RELEASE}.tar.gz | tar -xz -C /opt/certbot \
-    && mv /opt/certbot/certbot-${CERTBOT_RELEASE} /opt/certbot/src \
-    && virtualenv --no-site-packages -p python2 /opt/certbot/venv
-RUN /opt/certbot/venv/bin/pip install \
-        -e /opt/certbot/src/acme \
-        -e /opt/certbot/src \
-        -e /opt/certbot/src/certbot-apache \
-        -e /opt/certbot/src/certbot-nginx \
-        -e /opt/certbot/src/certbot-dns-cloudflare \
-        -e /opt/certbot/src/certbot-dns-google \
-        -e /opt/certbot/src/certbot-dns-route53 \
-    && /opt/certbot/venv/bin/pip install schedule redis \
-    && apk del ${BUILD_DEPS} \
-    && rm -rf /var/cache/apk/*
+### Install python2 for run main.py
+RUN apk add --update --no-cache python2
+RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py && python get-pip.py
+RUN pip2 install redis
+RUN pip2 cache purge
 
+### Install SSH Server
+RUN apk add --update --no-cache openssh 
+#RUN echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
+RUN adduser -h /home/certbot -s /bin/sh -D certbot
+#RUN echo -n 'certbot:certbot' | chpasswd
 
 VOLUME ["/etc/letsencrypt", "/usr/src/python"]
 
 COPY main.py /usr/src/
-COPY example /usr/src/python/
+#COPY example /usr/src/python/
 
 CMD [ "python", "-u", "/usr/src/main.py" ]
